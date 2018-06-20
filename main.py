@@ -3,7 +3,7 @@ import numpy as np
 import h5py
 from keras.models import load_model
 
-cap = cv2.VideoCapture('D:\\HW2\\test1.avi')
+cap = cv2.VideoCapture(0)
 bgSubThreshold = 100
 bgModel = cv2.createBackgroundSubtractorMOG2(0, bgSubThreshold)
 imgSkin = np.zeros((int(cap.get(cv2.CAP_PROP_FRAME_HEIGHT)),int(cap.get(cv2.CAP_PROP_FRAME_WIDTH)),3), np.uint8)
@@ -73,9 +73,11 @@ while(True):
 	#						cv2.circle(frame, (angle[1,0,0], angle[1,0,1]), 5,(255,0,0),5)
 
 
+	im2 = im2[70:410,150:490]
+
 	cv2.drawContours(frame, contours, -1, (0,255,0) ,3)
 #	cv2.imshow('webcam', frame)
-	im2 = frame[:,:,0]
+	#im2 = frame[:,:,0]
 	im2 = cv2.resize(im2,(0,0),fx = 0.1, fy = 0.1)
 	cv2.imshow('check', im2)
 	im3 = np.reshape(im2, im2.shape[0]*im2.shape[1])
@@ -107,6 +109,7 @@ while(True):
 	#
 
 	
+	cv2.rectangle(frame, (150, 70), (640-150, 480-70), (255, 0, 0), 5)
 	frame = frame[:,::-1,:]
 	cv2.imshow('webcam', frame)
 	
