@@ -1,7 +1,7 @@
 import cv2
 import numpy as np
 
-cap = cv2.VideoCapture('test01.avi')
+cap = cv2.VideoCapture('D:\\HW2\\test1.avi')
 bgSubThreshold = 100
 bgModel = cv2.createBackgroundSubtractorMOG2(0, bgSubThreshold)
 imgSkin = np.zeros((int(cap.get(cv2.CAP_PROP_FRAME_HEIGHT)),int(cap.get(cv2.CAP_PROP_FRAME_WIDTH)),3), np.uint8)
@@ -39,8 +39,9 @@ while(True):
 	imgSkin = frame.copy()
 
 	skin = cv2.inRange(ycrcb, np.array([20, 155-22, 120-22]), np.array([255, 155+22, 120+22]))
+	cv2.imshow('skin', skin)
 	im2, contours, hierarchy = cv2.findContours(skin, cv2.RETR_TREE, cv2.CHAIN_APPROX_SIMPLE)
-
+	
 	output[:,:,0] = im2[70:410,150:490]
 	output[:,:,1] = im2[70:410,150:490]
 	output[:,:,2] = im2[70:410,150:490]

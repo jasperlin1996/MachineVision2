@@ -8,6 +8,8 @@ bgSubThreshold = 100
 bgModel = cv2.createBackgroundSubtractorMOG2(0, bgSubThreshold)
 imgSkin = np.zeros((int(cap.get(cv2.CAP_PROP_FRAME_HEIGHT)),int(cap.get(cv2.CAP_PROP_FRAME_WIDTH)),3), np.uint8)
 
+output = np.zeros((340,680*2,3), dtype = np.uint8)
+
 model = load_model('test_model.h5')
 
 result_char = ['子','丑','寅','卯','辰','巳','午','未','申','酉','戌','亥']
@@ -72,17 +74,19 @@ while(True):
 	#					if inner_product(angle[0],angle[1],angle[2]) > -0.5:
 	#						cv2.circle(frame, (angle[1,0,0], angle[1,0,1]), 5,(255,0,0),5)
 
-
+	output[:,0:output.shape[1]//2,0] = im2
+	output[:,0:output.shape[1]//2,1] = im2
+	output[:,0:output.shape[1]//2,2] = im2
 	im2 = im2[70:410,150:490]
 
 	cv2.drawContours(frame, contours, -1, (0,255,0) ,3)
-#	cv2.imshow('webcam', frame)
-	#im2 = frame[:,:,0]
-	im2 = cv2.resize(im2,(0,0),fx = 0.1, fy = 0.1)
+	output[:,output.shape[1]//2:output.shape[1],:] = frame
 	cv2.imshow('check', im2)
-	im3 = np.reshape(im2, im2.shape[0]*im2.shape[1])
-#	print(im2.shape)
-#	print(im2)
+
+	im3 = cv2.resize(im2,(0,0),fx = 0.1, fy = 0.1)
+
+	im3 = np.reshape(im3, im2.shape[0]*im2.shape[1])
+
 	if j % 30 == 0:
 		ans = model.predict(np.array([im3]))
 		print(ans)
@@ -95,24 +99,17 @@ while(True):
 			for index,value in enumerate(_):
 				if value == max:
 					if value > 0.5:
-
 						print("we got : {}".format(result_char[index]))
 					else:
 						print("we got nothing")
-
-		#cv2.imshow('test_case', im2)
-		pass
-
-
-	#print("Video size: {} x {}".format(width, height))
-	#print("Codec: " + codec)
-	#
+						cv2.puttext(output,result_char[index],(10,10),cv2.FONT_HERSHEY_SIMPLEX,0.75,(0, 255, 255),1,cv2.LINE_AA)
 
 	
+
 	cv2.rectangle(frame, (150, 70), (640-150, 480-70), (255, 0, 0), 5)
 	frame = frame[:,::-1,:]
 	cv2.imshow('webcam', frame)
-	
+	cv2.imshow('output', output)
 	if cv2.waitKey(25) & 0xFF == ord('q'):
 		break
 
